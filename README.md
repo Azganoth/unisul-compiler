@@ -2,7 +2,7 @@
 
 Compilador para a matéria Tradução de Linguagens de Programação na UNISUL.
 
-## 📘 Especificação da Linguagem "A"
+## 📘 Especificação da Linguagem "AL"
 
 ### Elementos léxicos
 

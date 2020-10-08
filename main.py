@@ -3,7 +3,7 @@ from pathlib import Path
 
 # CLI
 parser = argparse.ArgumentParser(description='''
-Analisa o código-fonte da linguagem "A".
+Analisa o código-fonte da linguagem "AL".
 ''')
 parser.add_argument('source_code_path', help='caminho para o arquivo contendo o código-fonte')
 args = parser.parse_args()
