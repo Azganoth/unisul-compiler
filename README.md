@@ -59,7 +59,7 @@ Um delimitador é definido por dois-pontos (`:`).
 Executar o programa:
 
 ```sh
-python main.py
+python main.py caminho_do_arquivo
 ```
 
 ## 🔑 Licença
