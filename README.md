@@ -16,7 +16,7 @@ Um identificador pode conter as letras minúsculas e maiúsculas `A` a `Z`, e, e
 
 #### Palavras-reservadas
 
-Os seguintes identificadores são usados como palavras reservadas e não podem ser usados como meros identificadores: `DECLARACOES`, `ALGORITMO`, `INTEIRO`, `REAL`, `ATRIBUIR`, `A`, `LER`, `IMPRIMIR`, `SE`, `ENTAO`, `ENQUANTO`, `INICIO` e `FIM`.
+Os seguintes identificadores são usados como palavras reservadas e não podem ser usados como meros identificadores: `DECLARACOES`, `ALGORITMO`, `INT`, `REAL`, `ATRIBUIR`, `A`, `LER`, `IMPRIMIR`, `SE`, `ENTAO`, `ENQUANTO`, `INICIO` e `FIM`.
 
 #### Cadeias de caracteres
 
@@ -56,35 +56,10 @@ Um delimitador é definido por dois-pontos (`:`).
 
 -   Python 3.8
 
-Criar um ambiente virtual:
-
-```sh
-python -m venv venv
-```
-
-Carregar as variáveis de ambiente:
-
-```sh
-# bash
-venv/Scripts/activate
-
-# cmd
-venv\Scripts\activate.bat
-
-# powershell
-venv/Scripts/Activate.ps1
-```
-
-Instalar as dependências do projeto:
-
-```sh
-pip install -r requirements.txt
-```
-
 Executar o programa:
 
 ```sh
-python main.py caminho_do_arquivo
+python main.py
 ```
 
 ## 🔑 Licença
