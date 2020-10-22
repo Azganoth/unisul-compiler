@@ -2,14 +2,15 @@
 argt:INT
 ftr:INT
 
-:ALGORITMO % Calcula o ftr de um número inteiro
+:ALGORITMO
+% Calcula o fatorial de um número inteiro e o imprime.
 LER argt
+% atribuindo o argumento ao fatorial
 ATRIBUIR argt A ftr
 SE argt = 0 ENTAO ATRIBUIR 1 A ftr
-ENQUANTO argt > 1
-    INICIO
-    ATRIBUIR ftr * (argt - 1) A ftr
-
-    ATRIBUIR argt - 1 A argt
-    FIM
+ENQUANTO argt <1
+   INICIO
+      ATRIBUIR ftr * (argt - 1) A ftr
+      ATRIBUIR argt - 1 A argt
+   FIM
 IMPRIMIR ftr
