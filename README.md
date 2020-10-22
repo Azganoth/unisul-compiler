@@ -2,6 +2,18 @@
 
 Compilador para a matéria Tradução de Linguagens de Programação na UNISUL.
 
+## 🚀 Como usar
+
+**Requerimentos:**
+
+-   Python 3.8
+
+Executar o programa:
+
+```sh
+python main.py caminho_do_arquivo
+```
+
 ## 📘 Especificação da Linguagem "AL"
 
 ### Elementos léxicos
@@ -49,18 +61,6 @@ Os símbolos parêntese aberto (`(`) e parêntese fechado (`)`) são usados como
 #### Delimitadores
 
 Um delimitador é definido por dois-pontos (`:`).
-
-## 🚀 Como usar
-
-**Requerimentos:**
-
--   Python 3.8
-
-Executar o programa:
-
-```sh
-python main.py caminho_do_arquivo
-```
 
 ## 🔑 Licença
 
