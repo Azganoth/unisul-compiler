@@ -144,7 +144,7 @@ def describe_code(source_file_path: Path):
                 # ignorar todos os caracteres até uma quebra de linha ou o fim do arquivo
                 if peeked_character == '%':
                     skip()
-                    while peek() not in ['\n', '']:
+                    while peek() not in ['\r', '\n', '']:
                         skip()
                 else:
                     skip()
