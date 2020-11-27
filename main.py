@@ -1,15 +1,19 @@
 import argparse
 from pathlib import Path
 
-from unisul_compiler.lexer import describe_code
+from unisul_compiler.lexer import describe
 
 # CLI
 parser = argparse.ArgumentParser(description='''
-Analisa o código-fonte da linguagem "AL".
+Compilador da linguagem "A" (sem geração de código, apenas relatório).
 ''')
-parser.add_argument('source_code_path', help='caminho para o arquivo contendo o código-fonte')
+parser.add_argument('source_file_path', help='caminho para o arquivo de texto (código-fonte)')
 args = parser.parse_args()
 
-source_code_path = Path(args.source_code_path)
+source_file_path = Path(args.source_file_path)
 
-print(*describe_code(source_code_path), sep='\n')
+print(f'Analisando o arquivo "{source_file_path}"...')
+
+with open(source_file_path) as source_file:
+    print('\nAnálise léxica:')
+    tokens = describe(source_file.read())

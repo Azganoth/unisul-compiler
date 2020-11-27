@@ -14,7 +14,7 @@ Executar o programa:
 python main.py caminho_do_arquivo
 ```
 
-## 📘 Especificação da Linguagem "AL"
+## 📘 Especificação da Linguagem "A"
 
 ### Elementos léxicos
 
