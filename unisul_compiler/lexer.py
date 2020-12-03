@@ -185,9 +185,9 @@ def describe(source_code: str):
         while peek().isalpha():
             lexeme += advance()
 
-        if lexeme == 'AND':
+        if lexeme == 'E':
             return Token(TokenKind.AND_BOOLEAN_OPERATOR, lexeme)
-        elif lexeme == 'OR':
+        elif lexeme == 'OU':
             return Token(TokenKind.OR_BOOLEAN_OPERATOR, lexeme)
         else:
             for _ in range(len(lexeme)):
