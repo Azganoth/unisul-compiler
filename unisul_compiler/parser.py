@@ -66,7 +66,7 @@ def parse(tokens: List[Token]):
             O token sob o ponteiro.
         """
         nonlocal pointer
-        token_kinds_repr = " | ".join(map(lambda token_kind: token_kind.name, token_kinds))
+        token_kinds_repr = " | ".join(map(str, token_kinds))
 
         # verificar se ainda existem tokens
         if (token := peek()) is not None:
@@ -85,10 +85,11 @@ def parse(tokens: List[Token]):
                 f'nenhum dos tipos de tokens esperados [{token_kinds_repr}]')
 
     # Dicionário de símbolos do programa (escopo global)
-    symbols: Dict[str, Literal[TokenKind.INTEGER, TokenKind.FLOAT]] = {}
+    symbols: Dict[str, Literal[TokenKind.LITERAL_INT, TokenKind.LITERAL_FLOAT]] = {}
 
     def expect_variable(
-            var_name: str, var_type: Optional[Literal[TokenKind.INTEGER, TokenKind.FLOAT]] = None):
+            var_name: str,
+            var_type: Optional[Literal[TokenKind.LITERAL_INT, TokenKind.LITERAL_FLOAT]] = None):
         """Certifica que a variável foi declarada e retorna seu tipo,
         e, caso especificado, satisfaça o tipo de variável esperado.
 
@@ -110,8 +111,7 @@ def parse(tokens: List[Token]):
         # verificar se o tipo da variável satisfaz o tipo de variável esperado
         elif var_type is not None and symbol_kind is not var_type:
             raise ASemanticError(
-                f'erro semântico, {symbol_kind.name}, tipo da variável "{var_name}", '
-                f'não satisfaz {var_type.name}')
+                f'erro semântico, variável "{var_name}" com o tipo {symbol_kind} não satisfaz {var_type}')
 
         return symbol_kind
 
@@ -120,27 +120,27 @@ def parse(tokens: List[Token]):
         """Captura uma declaração."""
         name_token = expect(TokenKind.IDENTIFIER)
         expect(TokenKind.DELIMITER)
-        type_token = expect(TokenKind.INT_RESERVED_WORD, TokenKind.REAL_RESERVED_WORD)
+        type_token = expect(TokenKind.INT, TokenKind.REAL)
 
         # adicionar a variável ao dicionário de símbolos
         if (var_name := name_token.lexeme) not in symbols:
-            symbols[var_name] = (TokenKind.INTEGER
-                                 if type_token.kind == TokenKind.INT_RESERVED_WORD else
-                                 TokenKind.FLOAT)
+            symbols[var_name] = (TokenKind.LITERAL_INT
+                                 if type_token.kind == TokenKind.INT else
+                                 TokenKind.LITERAL_FLOAT)
         else:
             raise ASemanticError(f'erro semântico, variável "{var_name}" já foi declarada')
 
-    def arithmetic_expression() -> Literal[TokenKind.INTEGER, TokenKind.FLOAT]:
+    def arithmetic_expression() -> Literal[TokenKind.LITERAL_INT, TokenKind.LITERAL_FLOAT]:
         """Captura uma expressão aritmética.
 
         Returns:
             O tipo da expressão aritmética encontrada.
         """
-        left_expression = expect(TokenKind.INTEGER, TokenKind.FLOAT, TokenKind.IDENTIFIER,
-                                 TokenKind.OPEN_PARENTHESIS)
+        left_expression = expect(TokenKind.LITERAL_INT, TokenKind.LITERAL_FLOAT,
+                                 TokenKind.IDENTIFIER, TokenKind.LEFT_PARENTHESIS)
 
         # resolver uma expressão aritmética ao reconhecer um parênteses aberto
-        if (has_parenthesis := (left_expression_kind := left_expression.kind) == TokenKind.OPEN_PARENTHESIS):
+        if (has_parenthesis := (left_expression_kind := left_expression.kind) == TokenKind.LEFT_PARENTHESIS):
             left_expression_kind = arithmetic_expression()
 
         # certificar que a variável foi declarada e resgatar seu tipo, caso seja uma variável...
@@ -148,37 +148,31 @@ def parse(tokens: List[Token]):
             left_expression_kind = expect_variable(left_expression.lexeme)
 
         if peek().kind in [
-                TokenKind.ADDITION_ARITHMETIC_OPERATOR,
-                TokenKind.SUBTRACTION_ARITHMETIC_OPERATOR,
-                TokenKind.MULTIPLICATION_ARITHMETIC_OPERATOR,
-                TokenKind.DIVISION_ARITHMETIC_OPERATOR]:
+                TokenKind.ADDITION, TokenKind.SUBTRACTION,
+                TokenKind.MULTIPLICATION, TokenKind.DIVISION]:
             operator = expect(
-                TokenKind.ADDITION_ARITHMETIC_OPERATOR,
-                TokenKind.SUBTRACTION_ARITHMETIC_OPERATOR,
-                TokenKind.MULTIPLICATION_ARITHMETIC_OPERATOR,
-                TokenKind.DIVISION_ARITHMETIC_OPERATOR)
+                TokenKind.ADDITION, TokenKind.SUBTRACTION,
+                TokenKind.MULTIPLICATION, TokenKind.DIVISION)
             right_expression_kind = arithmetic_expression()
 
             # capturar o parênteses fechado (2)
             if has_parenthesis:
-                expect(TokenKind.CLOSE_PARENTHESIS)
+                expect(TokenKind.RIGHT_PARENTHESIS)
 
             # resolver em "inteiro" caso as duas expressões aritméticas resultarem
             # em números inteiros e o operador for adição, subtração ou multiplicação,
             # caso contrário resultar em "real"
-            if (left_expression_kind == TokenKind.INTEGER
-                and right_expression_kind == TokenKind.INTEGER
+            if (left_expression_kind == TokenKind.LITERAL_INT
+                and right_expression_kind == TokenKind.LITERAL_INT
                 and operator.kind in [
-                    TokenKind.ADDITION_ARITHMETIC_OPERATOR,
-                    TokenKind.SUBTRACTION_ARITHMETIC_OPERATOR,
-                    TokenKind.MULTIPLICATION_ARITHMETIC_OPERATOR]):
-                return TokenKind.INTEGER
+                    TokenKind.ADDITION, TokenKind.SUBTRACTION, TokenKind.MULTIPLICATION]):
+                return TokenKind.LITERAL_INT
 
-            return TokenKind.FLOAT
+            return TokenKind.LITERAL_FLOAT
 
         # capturar o parênteses fechado (1)
         if has_parenthesis:
-            expect(TokenKind.CLOSE_PARENTHESIS)
+            expect(TokenKind.RIGHT_PARENTHESIS)
 
         return left_expression_kind
 
@@ -186,54 +180,51 @@ def parse(tokens: List[Token]):
         """Captura uma expressão relacional."""
         # permitir a comparação entre "int" e "real"
         arithmetic_expression()
-        expect(TokenKind.EQUAL_RELATIONAL_OPERATOR, TokenKind.LESS_RELATIONAL_OPERATOR,
-               TokenKind.GREATER_RELATIONAL_OPERATOR, TokenKind.LESS_EQUAL_RELATIONAL_OPERATOR,
-               TokenKind.GREATER_EQUAL_RELATIONAL_OPERATOR, TokenKind.EQUIVALENT_RELATIONAL_OPERATOR)
+        expect(TokenKind.EQUAL, TokenKind.LESS, TokenKind.GREATER,
+               TokenKind.LESS_EQUAL, TokenKind.GREATER_EQUAL, TokenKind.NOT_EQUAL)
         arithmetic_expression()
-        if peek().kind in [TokenKind.AND_BOOLEAN_OPERATOR, TokenKind.OR_BOOLEAN_OPERATOR]:
-            expect(TokenKind.AND_BOOLEAN_OPERATOR, TokenKind.OR_BOOLEAN_OPERATOR)
+        if peek().kind in [TokenKind.AND, TokenKind.OR]:
+            expect(TokenKind.AND, TokenKind.OR)
             relational_expression()
 
     def command():
         """Captura um comando."""
         command_token = expect(
-            TokenKind.ATRIBUIR_RESERVED_WORD, TokenKind.LER_RESERVED_WORD,
-            TokenKind.IMPRIMIR_RESERVED_WORD, TokenKind.SE_RESERVED_WORD,
-            TokenKind.ENQUANTO_RESERVED_WORD, TokenKind.INICIO_RESERVED_WORD)
+            TokenKind.ATRIBUIR, TokenKind.LER, TokenKind.IMPRIMIR,
+            TokenKind.SE, TokenKind.ENQUANTO, TokenKind.INICIO)
 
-        if command_token.kind == TokenKind.ATRIBUIR_RESERVED_WORD:
+        if command_token.kind == TokenKind.ATRIBUIR:
             expression_kind = arithmetic_expression()
-            expect(TokenKind.A_RESERVED_WORD)
+            expect(TokenKind.A)
             var_token = expect(TokenKind.IDENTIFIER)
-            print(expression_kind)
             expect_variable(var_token.lexeme, expression_kind)
-        elif command_token.kind == TokenKind.LER_RESERVED_WORD:
+        elif command_token.kind == TokenKind.LER:
             var_token = expect(TokenKind.IDENTIFIER)
             expect_variable(var_token.lexeme)
-        elif command_token.kind == TokenKind.IMPRIMIR_RESERVED_WORD:
-            possible_var_token = expect(TokenKind.IDENTIFIER, TokenKind.STRING)
+        elif command_token.kind == TokenKind.IMPRIMIR:
+            possible_var_token = expect(TokenKind.IDENTIFIER, TokenKind.LITERAL_STR)
             if possible_var_token.kind == TokenKind.IDENTIFIER:
                 expect_variable(possible_var_token.lexeme)
-        elif command_token.kind == TokenKind.SE_RESERVED_WORD:
+        elif command_token.kind == TokenKind.SE:
             relational_expression()
-            expect(TokenKind.ENTAO_RESERVED_WORD)
+            expect(TokenKind.ENTAO)
             command()
-        elif command_token.kind == TokenKind.ENQUANTO_RESERVED_WORD:
+        elif command_token.kind == TokenKind.ENQUANTO:
             relational_expression()
             command()
         else:  # TokenKind.INICIO_RESERVED_WORD
             # permitir que existam blocos "INICIO FIM" vazios ou com outros blocos "INICIO FIM"
-            while peek().kind != TokenKind.FIM_RESERVED_WORD:
+            while peek().kind != TokenKind.FIM:
                 command()
-            expect(TokenKind.FIM_RESERVED_WORD)
+            expect(TokenKind.FIM)
 
     # capturar um programa da linguagem "A"
     expect(TokenKind.DELIMITER)
-    expect(TokenKind.DECLARACOES_RESERVED_WORD)
+    expect(TokenKind.DECLARACOES)
     while peek().kind == TokenKind.IDENTIFIER:
         declaration()
 
     expect(TokenKind.DELIMITER)
-    expect(TokenKind.ALGORITMO_RESERVED_WORD)
+    expect(TokenKind.ALGORITMO)
     while peek() is not None:
         command()

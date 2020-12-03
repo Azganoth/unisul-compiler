@@ -4,46 +4,49 @@ from enum import Enum, auto
 class TokenKind(Enum):
     """Representa um tipo de token da linguagem "A"."""
     # número
-    INTEGER = auto()
-    FLOAT = auto()
+    LITERAL_INT = auto()
+    LITERAL_FLOAT = auto()
     # sequência de caracteres
-    STRING = auto()
-    # palavra reservada
-    DECLARACOES_RESERVED_WORD = auto()
-    ALGORITMO_RESERVED_WORD = auto()
-    INT_RESERVED_WORD = auto()
-    REAL_RESERVED_WORD = auto()
-    ATRIBUIR_RESERVED_WORD = auto()
-    A_RESERVED_WORD = auto()
-    LER_RESERVED_WORD = auto()
-    IMPRIMIR_RESERVED_WORD = auto()
-    SE_RESERVED_WORD = auto()
-    ENTAO_RESERVED_WORD = auto()
-    ENQUANTO_RESERVED_WORD = auto()
-    INICIO_RESERVED_WORD = auto()
-    FIM_RESERVED_WORD = auto()
-    # operador booleano
-    AND_BOOLEAN_OPERATOR = auto()
-    OR_BOOLEAN_OPERATOR = auto()
-    # identificador
-    IDENTIFIER = auto()
-    # operador relacional
-    EQUAL_RELATIONAL_OPERATOR = auto()
-    LESS_RELATIONAL_OPERATOR = auto()
-    GREATER_RELATIONAL_OPERATOR = auto()
-    LESS_EQUAL_RELATIONAL_OPERATOR = auto()
-    GREATER_EQUAL_RELATIONAL_OPERATOR = auto()
-    EQUIVALENT_RELATIONAL_OPERATOR = auto()
-    # operador aritmético
-    ADDITION_ARITHMETIC_OPERATOR = auto()
-    SUBTRACTION_ARITHMETIC_OPERATOR = auto()
-    MULTIPLICATION_ARITHMETIC_OPERATOR = auto()
-    DIVISION_ARITHMETIC_OPERATOR = auto()
-    # parêntese
-    OPEN_PARENTHESIS = auto()
-    CLOSE_PARENTHESIS = auto()
+    LITERAL_STR = auto()
     # delimitador
     DELIMITER = auto()
+    # palavra reservada
+    DECLARACOES = auto()
+    ALGORITMO = auto()
+    INT = auto()
+    REAL = auto()
+    ATRIBUIR = auto()
+    A = auto()
+    LER = auto()
+    IMPRIMIR = auto()
+    SE = auto()
+    ENTAO = auto()
+    ENQUANTO = auto()
+    INICIO = auto()
+    FIM = auto()
+    # parêntese
+    LEFT_PARENTHESIS = auto()
+    RIGHT_PARENTHESIS = auto()
+    # operador relacional
+    EQUAL = auto()
+    NOT_EQUAL = auto()
+    LESS = auto()
+    GREATER = auto()
+    LESS_EQUAL = auto()
+    GREATER_EQUAL = auto()
+    # operador aritmético
+    ADDITION = auto()
+    SUBTRACTION = auto()
+    MULTIPLICATION = auto()
+    DIVISION = auto()
+    # operador booleano
+    AND = auto()
+    OR = auto()
+    # identificador
+    IDENTIFIER = auto()
+
+    def __str__(self):
+        return self.name
 
 
 class Token:
@@ -58,7 +61,7 @@ class Token:
         self._lexeme = lexeme
 
     def __repr__(self) -> str:
-        return f'<{self._kind.name}, "{self._lexeme}">'
+        return f'<{self._kind}, "{self._lexeme}">'
 
     @property
     def kind(self):
