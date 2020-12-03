@@ -228,8 +228,10 @@ def describe(source_code: str):
         elif peeked_character == '<':
             lexeme += advance()
             if (peeked_character := peek()) == '=':
+                lexeme += advance()
                 return Token(TokenKind.LESS_EQUAL_RELATIONAL_OPERATOR, lexeme)
             elif peeked_character == '>':
+                lexeme += advance()
                 return Token(TokenKind.EQUIVALENT_RELATIONAL_OPERATOR, lexeme)
             else:
                 return Token(TokenKind.LESS_RELATIONAL_OPERATOR, lexeme)
