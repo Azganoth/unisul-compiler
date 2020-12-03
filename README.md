@@ -62,6 +62,47 @@ Os símbolos parêntese aberto (`(`) e parêntese fechado (`)`) são usados como
 
 Um delimitador é definido por dois-pontos (`:`).
 
+### Elementos sintáticos
+
+```
+program := ':' DECLARACOES {declaration} ':' ALGORITMO {command}
+
+declaration := var ':' (INT | REAL)
+
+command :=
+ATRIBUIR arithmetic_expression A var |
+LER var |
+IMPRIMIR (var | STRING) |
+SE relational_expression ENTAO command |
+ENQUANTO relational_expression command |
+INICIO [command] FIM
+
+relational_expression :=
+['('] arithmetic_expression relational_operator arithmetic_expression
+[boolean_operator relational_expression] [')']
+
+boolean_operator := 'E' | 'OU'
+
+arithmetic_expression :=
+['('] exp [arithmetic_operator arithmetic_expression] [')']
+
+arithmetic_operator := '+' | '-' | '*' | '/'
+
+relational_operator := '=' | '<' | '>' | '<=' | '>=' | '<>'
+
+exp := int | float | var
+
+var := identifier
+```
+
+### Elementos semânticos
+
+#### Erros
+
+- Variável não declarada;
+- Variável com tipo imcompatível;
+- Variável já declarada.
+
 ## 🔑 Licença
 
 Este projeto está sob a [licença MIT](LICENSE.md).

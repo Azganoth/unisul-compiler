@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 
 from unisul_compiler.lexer import describe
+from unisul_compiler.parser import parse
 
 # CLI
 parser = argparse.ArgumentParser(description='''
@@ -17,3 +18,7 @@ print(f'Analisando o arquivo "{source_file_path}"...')
 with open(source_file_path) as source_file:
     print('\nAnálise léxica:')
     tokens = describe(source_file.read())
+
+
+print('\nAnálise sintática e semântica:')
+parse(tokens)
