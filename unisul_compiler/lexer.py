@@ -121,6 +121,7 @@ def describe(source_code: str):
                 lexeme += advance()
 
             if peek() == "'":
+                lexeme += advance()
                 return Token(TokenKind.STRING, lexeme)
             else:
                 for _ in range(len(lexeme)):
